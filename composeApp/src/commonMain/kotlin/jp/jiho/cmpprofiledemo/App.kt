@@ -16,9 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.resources.painterResource
 
-import agp9template.composeapp.generated.resources.Res
-import agp9template.composeapp.generated.resources.app_name
-import agp9template.composeapp.generated.resources.compose_multiplatform
+import cmpprofiledemo.composeapp.generated.resources.Res
+import cmpprofiledemo.composeapp.generated.resources.app_name
+import cmpprofiledemo.composeapp.generated.resources.compose_multiplatform
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

@@ -1,4 +1,4 @@
-rootProject.name = "Agp9Template"
+rootProject.name = "CmpProfileDemo"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
