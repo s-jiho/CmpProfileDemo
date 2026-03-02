@@ -12,8 +12,14 @@ This is a reference project demonstrating AGP 9 best practices for Kotlin Multip
 # Build Android APK
 ./gradlew :androidApp:assembleDebug
 
+# Build Android APK for a specific flavor (dev/staging/production)
+./gradlew :androidApp:assembleDebug -Pbuildkonfig.flavor=staging
+
 # Run common tests
 ./gradlew :composeApp:commonTest
+
+# Run a single test class
+./gradlew :composeApp:iosSimulatorArm64Test --tests "jp.jiho.cmpprofiledemo.presentation.profile.ProfileViewModelTest"
 
 # Build KMP shared library (all targets)
 ./gradlew :composeApp:assemble
@@ -33,7 +39,7 @@ AGP 9 prohibits `com.android.application` and `kotlin.multiplatform` in the same
 | Module | Plugin | Role |
 |--------|--------|------|
 | `androidApp` | `com.android.application` | Android entry point — `MainActivity`, `AndroidManifest.xml`, launcher icons |
-| `composeApp` | `com.android.kotlin.multiplatform.library` | Shared KMP library — all UI (`App.kt`), business logic, shared resources |
+| `composeApp` | `com.android.kotlin.multiplatform.library` | Shared KMP library — all UI, business logic, shared resources |
 | `iosApp` | Xcode project | iOS entry point — wraps `ComposeApp` framework via `MainViewController` |
 
 `androidApp` depends on `composeApp` via `implementation(projects.composeApp)`.
@@ -44,16 +50,56 @@ AGP 9 prohibits `com.android.application` and `kotlin.multiplatform` in the same
 - **`androidApp/build.gradle.kts`**: Uses only `com.android.application` — the `kotlin.android` plugin is intentionally absent (AGP 9 built-in Kotlin).
 - **`gradle.properties`**: No deprecated suppression flags (no `android.builtInKotlin=false`, no `android.newDsl=false`, etc.).
 
-### Source Set Layout (`composeApp`)
+### Layer Architecture (`composeApp/src/commonMain`)
 
 ```
-composeApp/src/
-  commonMain/kotlin/    # App.kt, Greeting.kt, Platform.kt (expect)
-  commonMain/composeResources/  # Shared resources (strings, drawables)
-  androidMain/kotlin/   # Platform.android.kt (actual)
-  iosMain/kotlin/       # Platform.ios.kt (actual), MainViewController.kt
-  commonTest/kotlin/    # ComposeAppCommonTest.kt
+jp.jiho.cmpprofiledemo/
+  domain/
+    model/          # Pure data classes (Profile)
+    repository/     # Repository interfaces (ProfileRepository)
+    AppError.kt     # Sealed class for domain errors
+  data/
+    dto/            # Ktor JSON DTOs (ProfileResponse, UpdateProfileRequest)
+    network/        # ApiClient, HttpClientProvider, SerialApiExecutor, ErrorMapping
+    repository/     # ProfileRepositoryImpl, MockProfileRepository
+  presentation/
+    profile/        # ProfileViewModel, ProfileUiState, ProfileEvent, ProfileStateReducer
+    editprofile/    # EditProfileViewModel, state, events, reducer, validator
+    validation/     # ValidationErrorMessage (Konform-based)
+  ui/
+    profile/        # ProfileScreen.kt
+    editprofile/    # EditProfileScreen.kt
+    navigation/     # AppNavGraph.kt, Routes.kt (type-safe @Serializable routes)
+    common/         # AppErrorExt.kt
+  di/
+    AppModule.kt    # Koin modules: networkModule, repositoryModule, viewModelModule
+    KoinInit.kt     # commonMain startKoin entry point
 ```
+
+Platform-specific sources:
+- `androidMain/network/OfflineDetection.android.kt` — OkHttp-based
+- `iosMain/network/OfflineDetection.ios.kt` — NWPathMonitor-based
+- `iosMain/di/KoinInit.kt` — iOS Koin bootstrap
+
+### State Management Pattern
+
+Each screen follows a strict Event/State/Reducer/ViewModel pattern (all in `commonMain`):
+- **`*UiState`** — immutable data class
+- **`*Event`** — sealed class of all possible state transitions
+- **`*StateReducer`** — pure object with `reduce(state, event): State` (unit-testable without coroutines)
+- **`*ViewModel`** — holds `MutableStateFlow<*UiState>`, calls reducer via `update { reduce(it, event) }`, uses `onStart` + `stateIn(WhileSubscribed(5000))`
+
+### Network Layer
+
+`ApiClient` wraps Ktor `HttpClient` and serializes all requests through a `SerialApiExecutor` (channel-based queue, capacity 64). This prevents race conditions on mutation endpoints. Parallel requests are possible via `ApiClient.parallel {}` which holds the channel slot open for the entire parallel block.
+
+### DI (Koin 4)
+
+Modules in `AppModule.kt`: `networkModule` (singleton `HttpClientProvider` with `onClose`), `repositoryModule`, `viewModelModule` (using `viewModelOf`). Android starts Koin in `CmpProfileDemoApplication`; iOS starts it in `iosMain/di/KoinInit.kt`.
+
+### BuildKonfig Flavors
+
+`BASE_URL` is injected at build time via BuildKonfig. Flavors: `dev` (beeceptor mock), `staging`, `production`. Default (no flavor) falls back to `dev`.
 
 ### Package
 
@@ -66,8 +112,14 @@ All Kotlin source uses `jp.jiho.cmpprofiledemo`.
 | AGP | 9.0.1 |
 | Kotlin | 2.3.10 |
 | Compose Multiplatform | 1.10.1 |
+| Ktor | 3.4.0 |
+| Koin | 4.1.1 |
 | Compile/Target SDK | 36 |
 | Min SDK | 28 |
 | JDK (required) | 17+ |
 | Android Studio (required) | Otter 3 Feature Drop 2025.2.3+ |
 | IntelliJ IDEA (required) | Q1 2026+ |
+
+## Testing
+
+Tests live in `composeApp/src/commonTest`. Libraries: kotlin-test, Kotest assertions, Turbine (Flow testing), kotlinx-coroutines-test, koin-test, ktor-client-mock. `MockProfileRepository` is the standard test double for repository layer.
