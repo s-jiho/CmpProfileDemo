@@ -1,3 +1,32 @@
 <resources>
     <string name="app_name">CmpProfileDemo</string>
+    <string name="validation_name_required">名前は必須です</string>
+    <string name="validation_email_required">メールアドレスは必須です</string>
+    <string name="validation_email_invalid_format">有効なメールアドレスを入力してください</string>
+    <string name="validation_bio_too_long">自己紹介は100文字以内で入力してください</string>
+    <string name="validation_image_url_invalid">有効なhttps URLを入力してください</string>
+
+    <!-- Error messages (shared) -->
+    <string name="error_offline">オフラインです。接続を確認してください。</string>
+    <string name="error_http_bad_request">リクエストが不正です</string>
+    <string name="error_http_unauthorized">認証に失敗しました</string>
+    <string name="error_http_not_found">リソースが見つかりません</string>
+    <string name="error_http_server_error">サーバーエラーが発生しました</string>
+    <string name="error_http_unknown">予期しないHTTPエラーが発生しました</string>
+    <string name="error_unknown">予期しないエラーが発生しました</string>
+
+    <!-- ProfileScreen -->
+    <string name="profile__fab_edit_content_description">編集</string>
+    <string name="profile__image_content_description">プロフィール画像</string>
+
+    <!-- EditProfileScreen -->
+    <string name="edit_profile__title">プロフィール編集</string>
+    <string name="edit_profile__back_content_description">戻る</string>
+    <string name="edit_profile__image_preview_content_description">プロフィール画像プレビュー</string>
+    <string name="edit_profile__field_image_url">画像URL</string>
+    <string name="edit_profile__field_name">名前</string>
+    <string name="edit_profile__field_email">Email</string>
+    <string name="edit_profile__field_bio">自己紹介</string>
+    <string name="edit_profile__notification_label">通知</string>
+    <string name="edit_profile__save_button">保存</string>
 </resources>
