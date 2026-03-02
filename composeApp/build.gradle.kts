@@ -9,7 +9,7 @@ plugins {
 
 kotlin {
     androidLibrary {
-        namespace = "jp.jiho.agp9template.shared"
+        namespace = "jp.jiho.cmpprofiledemo.shared"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)

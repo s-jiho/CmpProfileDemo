@@ -1,4 +1,4 @@
-package jp.jiho.agp9template
+package jp.jiho.cmpprofiledemo
 
 interface Platform {
     val name: String

@@ -1,4 +1,4 @@
-package jp.jiho.agp9template
+package jp.jiho.cmpprofiledemo
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

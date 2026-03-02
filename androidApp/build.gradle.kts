@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "jp.jiho.agp9template"
+    namespace = "jp.jiho.cmpprofiledemo"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "jp.jiho.agp9template"
+        applicationId = "jp.jiho.cmpprofiledemo"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1

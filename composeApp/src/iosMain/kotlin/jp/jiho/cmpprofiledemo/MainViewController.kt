@@ -1,4 +1,4 @@
-package jp.jiho.agp9template
+package jp.jiho.cmpprofiledemo
 
 import androidx.compose.ui.window.ComposeUIViewController
 
