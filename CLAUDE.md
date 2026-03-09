@@ -64,8 +64,8 @@ jp.jiho.cmpprofiledemo/
     repository/     # ProfileRepositoryImpl, MockProfileRepository
   presentation/
     profile/        # ProfileViewModel, ProfileUiState, ProfileEvent, ProfileStateReducer
-    editprofile/    # EditProfileViewModel, state, events, reducer, validator
-    validation/     # ValidationErrorMessage (Konform-based)
+    editprofile/    # EditProfileViewModel, UiState, Event, StateReducer, EditProfileValidator, EditProfileValidationError
+    validation/     # ValidationErrorMessage (string resource lookups for Konform validation errors)
   ui/
     profile/        # ProfileScreen.kt
     editprofile/    # EditProfileScreen.kt
@@ -75,6 +75,8 @@ jp.jiho.cmpprofiledemo/
     AppModule.kt    # Koin modules: networkModule, repositoryModule, viewModelModule
     KoinInit.kt     # commonMain startKoin entry point
 ```
+
+iOS targets: `iosArm64` and `iosSimulatorArm64` only (no x64).
 
 Platform-specific sources:
 - `androidMain/network/OfflineDetection.android.kt` — OkHttp-based
@@ -113,6 +115,8 @@ All Kotlin source uses `jp.jiho.cmpprofiledemo`.
 | Kotlin | 2.3.10 |
 | Compose Multiplatform | 1.10.1 |
 | Ktor | 3.4.0 |
+| Coil | 3.1.0 |
+| Konform | 0.11.1 |
 | Koin | 4.1.1 |
 | Compile/Target SDK | 36 |
 | Min SDK | 28 |
